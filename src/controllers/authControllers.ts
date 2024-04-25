@@ -4,8 +4,16 @@ import * as bcrypt from "bcrypt";
 import * as jwt from 'jsonwebtoken';
 import { error } from "console";
 
+
 const prisma = new PrismaClient;
 
+const CLIENT_ID = process.env.INSTAGRAM_CLIENT_ID;
+const CLIENT_SECRET = process.env.INSTAGRAM_CLIENT_SECRET;
+
+export const googleLogin = async (req: Request, res: Response) => {
+    
+}
+ 
 export const register = async (req: Request, res: Response) => {
     try {
         const { name, email, username, password } = req.body;
