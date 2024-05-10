@@ -14,8 +14,8 @@ model Users {
   id            Int      @id @default(autoincrement())
   email         String   @unique
   name          String?
-  username      String   @unique
-  password      String
+  details       String?
+  profilePic    String?
 
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
