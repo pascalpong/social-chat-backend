@@ -1,12 +1,11 @@
 import { Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
-import * as admin from "firebase-admin";
+import admin from "firebase-admin";
+import { serviceAccount } from '../services/serviceAccountKey';
 
 const prisma = new PrismaClient;
-
-import { serviceAccount } from '../services/serviceAccountKey';
 admin.initializeApp({
-    credential: admin.credential.cert(JSON.stringify(serviceAccount)),
+    credential: admin.credential.cert(serviceAccount as admin.ServiceAccount),
 });
 
 export const googleLogin = async (req: Request, res: Response) => {

@@ -1,4 +1,4 @@
-import * as express from 'express';
+import express from 'express';
 import { googleLogin } from '../controllers/authControllers';
 
 const userRouter = express.Router();

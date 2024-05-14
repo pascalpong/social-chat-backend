@@ -1,4 +1,4 @@
-import * as express from "express";
+import express from "express";
 import userRouter from "./user";
 import authRouter from "./auth";
 import { verifyToken } from "../middlewares/authentication";
