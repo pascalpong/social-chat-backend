@@ -3,5 +3,6 @@ import { Request } from "express";
 
 
 export interface RequestWithUsers extends Request {
-    user: Users
+    user: Users,
+    googleAuth: any
 }

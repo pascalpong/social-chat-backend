@@ -1,10 +1,9 @@
 import * as express from 'express';
-import { login, register } from '../controllers/authControllers';
+import { googleLogin } from '../controllers/authControllers';
 
 const userRouter = express.Router();
 
 // Define routes
-userRouter.post('/register', register);
-userRouter.post('/login', login);
+userRouter.post('/google', googleLogin);
 
 export default userRouter;
