@@ -30,3 +30,6 @@ Thumbs.db
 
 # IDE files
 *.iml
+
+#service account
+serviceAccountKey.json

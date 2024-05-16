@@ -1,28 +1,22 @@
-import { Request, Response } from "express";
+import { Response } from "express";
 import { PrismaClient } from "@prisma/client";
-import admin from "firebase-admin";
-import { serviceAccount } from '../services/serviceAccountKey';
+import { RequestWithUsers } from "../models";
 
 const prisma = new PrismaClient;
-admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount as admin.ServiceAccount),
-});
 
-export const googleLogin = async (req: Request, res: Response) => {
-    const idToken = req.body.stsTokenManager.accessToken;
+export const googleLogin : any = async (req: RequestWithUsers, res: Response) => {
     try {
-        const decodedToken = await admin.auth().verifyIdToken(idToken);
-        const { email } = decodedToken;
-
+        const { email } = req.googleAuth;
         const user = await prisma.users.findUnique({
             where: {
                 email
             }
         });
         if(!user) {
-            login(decodedToken)
+            const auth = await register(req.googleAuth);
+            return res.status(200).json(auth)
         } else {
-            register(decodedToken)
+            return res.status(200).json(user)
         }
     } catch (error) {
         console.log(error)
@@ -32,14 +26,15 @@ export const googleLogin = async (req: Request, res: Response) => {
  
 const register = async (details: any) => {
     try {
-        const { user, _tokenResponse } = details;
-        const { email, photoURL, fullname } = user
+        const { name, email, picture, uid } = details;
 
         const newUser = await prisma.users.create({
             data: { 
                 email,
-                profilePic: photoURL, 
-                details: { ...user, ..._tokenResponse }
+                name,
+                uid,
+                profilePic: picture, 
+                details
             }
         });
     
@@ -49,17 +44,4 @@ const register = async (details: any) => {
     }
 }
 
-const login = async (details: any) => {
-    try {
-        const { email } = details.body;
-        const user = await prisma.users.findUnique({
-            where: {
-                email
-            }
-        });
-        
-    } catch (error) {
-        console.log(error)
-    }
-}
 
