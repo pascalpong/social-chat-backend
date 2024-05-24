@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -10,32 +7,66 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Users {
-  id            Int      @id @default(autoincrement())
-  email         String   @unique
-  uid           String?  @unique
-  name          String?
-  details       String?
-  profilePic    String?
+model User {
+  id           Int     @id @default(autoincrement())
+  email        String  @unique
+  uid          String? @unique
+  name         String?
+  displayName  String?
+  description   String?
+  details      Json?
+  profilePic   String?
+  secretTokens Json?
+  tokens       Json?
 
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-  deletedAt     DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
 
-  sentMessages  Messages[] @relation("SentMessages")
-  receivedMessages Messages[] @relation("ReceivedMessages")
+  roomCreatedBy    Room[]    @relation("roomCreatedBy")
+  sentMessages     Message[] @relation("SentMessages")
+  receivedMessages Message[] @relation("ReceivedMessages")
+
+  rooms UserRoom[]
 }
 
-model Messages {
-  id            Int      @id @default(autoincrement())
-  message       String
+model Room {
+  id          Int       @id @default(autoincrement())
+  name        String
+  token       String
+  description   String?
+  createdById Int
+  createdBy   User      @relation("roomCreatedBy", fields: [createdById], references: [id])
+  closedAt    DateTime?
 
-  sentByUserId  Int
-  sentBy        Users    @relation("SentMessages", fields: [sentByUserId], references: [id])
-  sentToUserId  Int
-  sentTo        Users    @relation("ReceivedMessages", fields: [sentToUserId], references: [id])
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
 
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-  deletedAt     DateTime? 
+  users UserRoom[]
+}
+
+model Message {
+  id      Int    @id @default(autoincrement())
+  roomId  Int
+  message String
+
+  sentByUserId Int
+  sentBy       User @relation("SentMessages", fields: [sentByUserId], references: [id])
+  sentToUserId Int
+  sentTo       User @relation("ReceivedMessages", fields: [sentToUserId], references: [id])
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+}
+
+model UserRoom {
+  userId Int
+  roomId Int
+
+  user User @relation(fields: [userId], references: [id])
+  room Room @relation(fields: [roomId], references: [id])
+
+  @@id([userId, roomId])
 }
